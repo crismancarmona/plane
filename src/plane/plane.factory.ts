@@ -14,7 +14,7 @@ export class PlaneFactory {
     private readonly httpService: HttpService,
     private readonly planeService: PlaneService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   createPlane(id: string): Plane {
     const plane: Plane = new Plane(id);
@@ -32,7 +32,7 @@ export class PlaneFactory {
       console.log('registrando avion');
       const response = await firstValueFrom(
         this.httpService.post(
-          `http://127.0.0.1:3000/status/plane/register/${plane.id}`,
+          `http://host.docker.internal:3000/status/plane/register/${plane.id}`,
           {
             port: this.configService.getOrThrow<string>('AVION_PORT'),
           },
