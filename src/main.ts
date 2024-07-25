@@ -9,11 +9,14 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const port = configService.getOrThrow<string>('AVION_PORT');
-  const avionName = configService.getOrThrow<string>('AVION_NAME');
+  const port = configService.getOrThrow<string>('PLANE_PORT');
+  const planeName = configService.getOrThrow<string>('PLANE_NAME');
+  const planeNumberId = configService.getOrThrow<number>('PLANE_NUMBER_ID');
   const planeFactory = app.get(PlaneFactory);
 
-  await planeFactory.registerPlane(planeFactory.createPlane(avionName));
+  await planeFactory.registerPlane(
+    planeFactory.createPlane(planeName, planeNumberId),
+  );
 
   await app.listen(port ?? 3001);
 }

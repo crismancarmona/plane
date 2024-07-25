@@ -17,6 +17,7 @@ export class PlaneController {
     return {
       currentPosition: currentPlane?.currentPosition,
       id: currentPlane?.id,
+      numberId: currentPlane?.numberId,
     };
   }
 
