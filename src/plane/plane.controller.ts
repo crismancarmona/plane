@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Post } from '@nestjs/common';
 import { Plane } from 'types/dist/domain/plane';
 import { PlaneFactory } from './plane.factory';
 import { ProcessActionDto } from 'types/dist/process/ProcessActionDto';
@@ -14,11 +14,12 @@ export class PlaneController {
   @Get('status')
   async getCurrentStatus(): Promise<Partial<Plane>> {
     const currentPlane = this.planeFactory.getCurrentPlane();
-    return {
-      currentPosition: currentPlane?.currentPosition,
-      id: currentPlane?.id,
-      numberId: currentPlane?.numberId,
-    };
+
+    if (!currentPlane) {
+      throw new NotFoundException();
+    }
+
+    return currentPlane.getDTO();
   }
 
   @Post('processAction')

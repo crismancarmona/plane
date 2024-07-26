@@ -16,8 +16,9 @@ export class PlaneFactory {
     private readonly configService: ConfigService,
   ) {}
 
-  createPlane(id: string, numberId: number): Plane {
-    const plane: Plane = new Plane(id, numberId);
+  createPlane(id: string, numberId: number, port: string): Plane {
+    const plane: Plane = new Plane(id, numberId, port);
+    plane.update();
     this.currentPlane = plane;
     this.planeService.executeAction(Action.PREPARE, plane);
     return plane;
@@ -30,12 +31,11 @@ export class PlaneFactory {
   async registerPlane(plane: Plane): Promise<Plane | undefined> {
     try {
       console.log('registrando avion');
+      const planeDto = plane.getDTO();
       const response = await firstValueFrom(
         this.httpService.post(
-          `http://host.docker.internal:3000/status/plane/register/${plane.id}`,
-          {
-            port: this.configService.getOrThrow<string>('PLANE_PORT'),
-          },
+          `http://host.docker.internal:3000/status/plane/register`,
+          planeDto,
         ),
       );
       return response.data === true ? plane : undefined;
