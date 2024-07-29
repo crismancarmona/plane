@@ -22,7 +22,9 @@ export class PlaneService {
     plane.intervals = [];
     plane.intervals.push(
       setInterval(() => {
-        console.log('engine working');
+        console.log(
+          'engine working: ' + Math.random() + ' process: ' + process.pid,
+        );
       }, 500),
     );
   }
@@ -34,17 +36,17 @@ export class PlaneService {
       console.warn('the engine is off');
     } else {
       const moveX = setInterval(() => {
-        plane.currentPosition!.x += 5;
+        plane.currentPosition!.x += 0.5;
       }, 250);
       setTimeout(() => {
         const moveY = setInterval(() => {
-          plane.currentPosition!.y += 5;
+          plane.currentPosition!.y += 0.5;
         }, 250);
 
         setTimeout(() => {
           clearInterval(moveY);
         }, 12000);
-      }, 12000);
+      }, 48000);
     }
   }
 }
