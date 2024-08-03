@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Plane } from 'types/dist/domain/plane';
+import { PlaneFunction } from 'types/dist/domain/plane-function';
 import { PlaneIntervals } from 'types/dist/domain/plane-intervals';
 import { PlaneState } from 'types/dist/domain/plane-state';
 import { Action } from 'types/dist/process/Action';
@@ -26,6 +27,13 @@ export class PlaneService {
     this.logger.log('Turning on: ' + plane);
     plane.stats.state = PlaneState.READY;
     plane.stats.velocity = 250;
+
+    setInterval(() => {
+      const functions = Array.from(plane.functions?.values() ?? []);
+      functions.forEach((func) => {
+        func(plane);
+      });
+    }, plane.stats.velocity);
   }
 
   private takeOff(plane: Plane): void {
@@ -36,51 +44,40 @@ export class PlaneService {
     } else {
       plane.stats.state = PlaneState.RUNNING;
       const planeVelocity = plane.stats.velocity ?? 250;
-      const moveX = setInterval(() => {
-        plane.stats!.x = (plane.stats.x ?? 0) + planeVelocity / 500;
-      }, planeVelocity);
-      plane.intervals?.set(PlaneIntervals.MOVE_X, moveX);
-      setTimeout(() => {
-        const moveZ = setInterval(() => {
-          plane.stats!.z = (plane.stats.z ?? 0) + planeVelocity / 500;
-        }, planeVelocity);
 
-        plane.intervals?.set(PlaneIntervals.MOVE_Y, moveZ);
+      plane.functions?.set(PlaneFunction.MOVE_X, (planeLocal: Plane) => {
+        planeLocal.stats!.x = (planeLocal.stats.x ?? 0) + planeVelocity / 500;
+      });
+
+      setTimeout(() => {
+        plane.functions?.set(PlaneFunction.MOVE_Z, (planeLocal: Plane) => {
+          planeLocal.stats!.z = (planeLocal.stats.z ?? 0) + planeVelocity / 500;
+        });
+
         plane.stats.state = PlaneState.ON_AIR;
 
         setTimeout(() => {
-          clearInterval(moveZ);
+          plane.functions?.delete(PlaneFunction.MOVE_Z);
         }, planeVelocity * 48);
       }, planeVelocity * 192);
     }
   }
 
   private stopEngine(plane: Plane): void {
-    const moveX = plane.intervals?.get(PlaneIntervals.MOVE_X);
-    const moveY = plane.intervals?.get(PlaneIntervals.MOVE_Y);
-    const moveZ = plane.intervals?.get(PlaneIntervals.MOVE_Z);
-    const intervals = [moveX, moveY, moveZ];
-
-    intervals
-      .filter((interval) => !!interval)
-      .forEach((interval) => {
-        clearInterval(interval);
-
-        this.logger.warn('stoping engine');
-      });
+    plane.functions?.delete(PlaneFunction.MOVE_X);
+    plane.functions?.delete(PlaneFunction.MOVE_Y);
+    plane.functions?.delete(PlaneFunction.MOVE_Z);
 
     plane.stats.state = PlaneState.OFF;
 
     if ((plane.stats.z ?? 0) > 0) {
-      const gravity = setInterval(() => {
-        if ((plane.stats.z ?? 0) <= 0) {
-          plane.stats.z = 0;
+      plane.functions?.set(PlaneFunction.MOVE_Z, (planeLocal: Plane) => {
+        if ((planeLocal.stats.z ?? 0) <= 0) {
+          planeLocal.stats.z = 0;
         } else {
-          plane.stats.z = (plane.stats.z ?? 0) - 1;
+          planeLocal.stats.z = (plane.stats.z ?? 0) - 1;
         }
-      }, 50);
-
-      plane.intervals?.set(PlaneIntervals.MOVE_Z, gravity);
+      });
     }
   }
 
@@ -95,33 +92,14 @@ export class PlaneService {
 
     const planeVelocity = plane.stats.velocity ?? 250;
 
-    const moveX = plane.intervals?.get(PlaneIntervals.MOVE_X);
-    const moveY = plane.intervals?.get(PlaneIntervals.MOVE_Y);
+    plane.functions?.set(PlaneFunction.MOVE_X, (planeLocal: Plane) => {
+      const newPos = (cosTheta * planeVelocity) / 500;
+      plane.stats!.x = (plane.stats.x ?? 0) + newPos;
+    });
 
-    if (moveX) {
-      this.logger.log('cleaning moveX');
-      clearInterval(moveX);
-    }
-
-    if (moveY) {
-      this.logger.log('cleaning moveY');
-      clearInterval(moveY);
-    }
-
-    plane.intervals?.set(
-      PlaneIntervals.MOVE_X,
-      setInterval(() => {
-        const newPos = (cosTheta * planeVelocity) / 500;
-        plane.stats!.x = (plane.stats.x ?? 0) + newPos;
-      }, planeVelocity),
-    );
-
-    plane.intervals?.set(
-      PlaneIntervals.MOVE_Y,
-      setInterval(() => {
-        const newPos = (sinTheta * planeVelocity) / 500;
-        plane.stats!.y = (plane.stats.y ?? 0) + newPos;
-      }, planeVelocity),
-    );
+    plane.functions?.set(PlaneFunction.MOVE_Y, () => {
+      const newPos = (sinTheta * planeVelocity) / 500;
+      plane.stats!.y = (plane.stats.y ?? 0) + newPos;
+    });
   }
 }

@@ -30,7 +30,7 @@ describe(PlaneService.name, () => {
 
     planeService.executeAction(Action.STOP_ENGINE, plane);
 
-    jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(2500);
 
     expect(plane.stats.state).toEqual<PlaneState>(PlaneState.OFF);
     expect(plane.stats.z).toEqual(0);
