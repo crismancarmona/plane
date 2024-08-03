@@ -15,5 +15,6 @@ RUN yarn install --frozen-lockfile
 COPY node_modules/types ./node_modules/types
 COPY src ./src
 RUN yarn build
+RUN yarn test
 
 CMD ["node", "dist/main.js"]
