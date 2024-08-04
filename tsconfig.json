@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
-    "module": "commonjs",                    // Usa el sistema de módulos CommonJS
-    "target": "ES2021",                      // Compila a ECMAScript 2021
-    "baseUrl": "./",                         // Establece la base para la resolución de módulos
-    "outDir": "./dist",                      // Directorio de salida para los archivos compilados
-    "declaration": true,                     // Genera archivos .d.ts para los tipos
-    "sourceMap": true,                      // Genera mapas de origen para depuración
-    "emitDecoratorMetadata": true,          // Habilita metadatos de decorador
-    "experimentalDecorators": true,         // Habilita decoradores experimentales
-    "allowSyntheticDefaultImports": true,   // Permite importaciones por defecto sintéticas
-    "strict": true,                         // Habilita todas las opciones de comprobación estricta
-    "skipLibCheck": true,                   // Omite la comprobación de tipos en los archivos de declaración de biblioteca
-    "moduleResolution": "node",             // Usa la resolución de módulos estilo Node.js
-    "resolveJsonModule": true,              // Permite importar módulos JSON
-    "esModuleInterop": true,                // Habilita la interoperabilidad entre módulos ES y CommonJS
-    "forceConsistentCasingInFileNames": true // Forza la consistencia en el uso de mayúsculas/minúsculas en los nombres de archivos
+    "module": "nodenext",
+    "target": "ESNext",
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],                  // Incluye todos los archivos en el directorio 'src'
-  "exclude": ["node_modules", "**/*.test.ts"] // Excluye 'node_modules' y archivos de prueba TypeScript
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.test.ts"]
 }

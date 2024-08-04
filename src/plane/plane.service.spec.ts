@@ -1,6 +1,4 @@
-import { Plane } from 'types/dist/domain/plane';
-import { PlaneState } from 'types/dist/domain/plane-state';
-import { Action } from 'types/dist/process/Action';
+import { Action, Plane, PlaneState } from '@crisman999/plane-types';
 import { PlaneService } from './plane.service';
 
 describe(PlaneService.name, () => {

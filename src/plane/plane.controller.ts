@@ -1,7 +1,6 @@
+import { Plane, ProcessActionDto } from '@crisman999/plane-types';
 import { Body, Controller, Get, NotFoundException, Post } from '@nestjs/common';
-import { Plane } from 'types/dist/domain/plane';
 import { PlaneFactory } from './plane.factory';
-import { ProcessActionDto } from 'types/dist/process/ProcessActionDto';
 import { PlaneService } from './plane.service';
 
 @Controller('/plane')

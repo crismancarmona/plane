@@ -1,9 +1,10 @@
+import {
+  Action,
+  Plane,
+  PlaneFunction,
+  PlaneState,
+} from '@crisman999/plane-types';
 import { Injectable, Logger } from '@nestjs/common';
-import { Plane } from 'types/dist/domain/plane';
-import { PlaneFunction } from 'types/dist/domain/plane-function';
-import { PlaneIntervals } from 'types/dist/domain/plane-intervals';
-import { PlaneState } from 'types/dist/domain/plane-state';
-import { Action } from 'types/dist/process/Action';
 
 @Injectable()
 export class PlaneService {
@@ -26,7 +27,7 @@ export class PlaneService {
   }
 
   private prepare(plane: Plane) {
-    this.logger.log('Turning on: ', plane);
+    this.logger.log('Turning on: ', plane.id);
     plane.stats.state = PlaneState.READY;
     plane.stats.velocity = 250;
     plane.stats.angle = 0;

@@ -3,8 +3,8 @@ import { firstValueFrom } from 'rxjs';
 import { PlaneService } from './plane.service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Plane } from 'types/dist/domain/plane';
-import { Action } from 'types/dist/process/Action';
+import { Plane } from '@crisman999/plane-types';
+import { Action } from '@crisman999/plane-types';
 
 @Injectable()
 export class PlaneFactory {
@@ -30,7 +30,6 @@ export class PlaneFactory {
 
   async registerPlane(plane: Plane): Promise<Plane | undefined> {
     try {
-      console.log('registrando avion');
       const planeDto = plane.getDTO();
       const response = await firstValueFrom(
         this.httpService.post(
