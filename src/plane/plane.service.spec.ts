@@ -63,7 +63,29 @@ describe(PlaneService.name, () => {
     expect(plane.stats.x).toBeCloseTo(102.5);
     expect(plane.stats.y).toBeCloseTo(0);
   });
+
+  it('acelerate the plane', () => {
+    testTakeOff(planeService, plane);
+    const oldVelocity = plane.stats.velocity;
+    planeService.executeAction(Action.ACELERATE, plane, { velocity: '100' });
+
+    expect(plane.stats.velocity).not.toEqual(oldVelocity);
+    expect(plane.stats.velocity).toEqual(100);
+
+    jest.advanceTimersByTime(100);
+
+    expect(plane.stats.x).toEqual(104.5);
+
+    jest.advanceTimersByTime(100);
+
+    expect(plane.stats.x).toEqual(105);
+
+    jest.advanceTimersByTime(100);
+
+    expect(plane.stats.x).toEqual(105.5);
+  });
 });
+
 function testTurnOn(planeService: PlaneService, plane: Plane) {
   planeService.executeAction(Action.PREPARE, plane);
 

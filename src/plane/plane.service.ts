@@ -8,12 +8,14 @@ import { Action } from 'types/dist/process/Action';
 @Injectable()
 export class PlaneService {
   private readonly logger = new Logger(PlaneService.name);
+  private engine: NodeJS.Timeout | undefined;
 
   private readonly actionsByName = new Map<Action, Function>([
     [Action.PREPARE, this.prepare.bind(this)],
     [Action.TAKE_OFF, this.takeOff.bind(this)],
     [Action.STOP_ENGINE, this.stopEngine.bind(this)],
     [Action.ROTATE, this.rotate.bind(this)],
+    [Action.ACELERATE, this.acelerate.bind(this)],
   ]);
 
   executeAction(action: Action, plane: Plane, params?: Record<string, string>) {
@@ -24,16 +26,12 @@ export class PlaneService {
   }
 
   private prepare(plane: Plane) {
-    this.logger.log('Turning on: ' + plane);
+    this.logger.log('Turning on: ', plane);
     plane.stats.state = PlaneState.READY;
     plane.stats.velocity = 250;
+    plane.stats.angle = 0;
 
-    setInterval(() => {
-      const functions = Array.from(plane.functions?.values() ?? []);
-      functions.forEach((func) => {
-        func(plane);
-      });
-    }, plane.stats.velocity);
+    this.acelerate(plane, { velocity: String(plane.stats.velocity) });
   }
 
   private takeOff(plane: Plane): void {
@@ -101,5 +99,19 @@ export class PlaneService {
       const newPos = (sinTheta * planeVelocity) / 500;
       plane.stats!.y = (plane.stats.y ?? 0) + newPos;
     });
+  }
+
+  private acelerate(plane: Plane, params: { velocity: string }) {
+    plane.stats.velocity = Number(params.velocity);
+
+    if (this.engine) {
+      clearInterval(this.engine);
+    }
+    this.engine = setInterval(() => {
+      const functions = Array.from(plane.functions?.values() ?? []);
+      functions.forEach((func) => {
+        func(plane);
+      });
+    }, plane.stats.velocity);
   }
 }
