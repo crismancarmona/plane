@@ -16,11 +16,15 @@ export class PlaneFactory {
     private readonly configService: ConfigService,
   ) {}
 
-  createPlane(id: string, numberId: number, port: string): Plane {
+  async createPlane(
+    id: string,
+    numberId: number,
+    port: string,
+  ): Promise<Plane> {
     const plane: Plane = new Plane(id, numberId, port);
     plane.update();
     this.currentPlane = plane;
-    this.planeService.executeAction(Action.PREPARE, plane);
+    await this.planeService.executeAction(Action.PREPARE, plane);
     return plane;
   }
 

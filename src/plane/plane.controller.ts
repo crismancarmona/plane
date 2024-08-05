@@ -25,7 +25,7 @@ export class PlaneController {
   async processAction(@Body() processActionDto: ProcessActionDto) {
     const currentPlane = this.planeFactory.getCurrentPlane();
     if (currentPlane) {
-      this.planeService.executeAction(
+      await this.planeService.executeAction(
         processActionDto.action,
         currentPlane,
         processActionDto.params,

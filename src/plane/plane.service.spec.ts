@@ -1,8 +1,11 @@
 import { Action, Plane, PlaneState } from '@crisman999/plane-types';
 import { PlaneService } from './plane.service';
+import { SnsService } from '../core/notifications/sns/sns.service';
 
 describe(PlaneService.name, () => {
-  const planeService = new PlaneService();
+  const planeService = new PlaneService({
+    sendStatus: jest.fn(),
+  } as unknown as SnsService);
 
   let plane: Plane;
 

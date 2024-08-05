@@ -5,11 +5,14 @@ import {
   PlaneState,
 } from '@crisman999/plane-types';
 import { Injectable, Logger } from '@nestjs/common';
+import { SnsService } from '../core/notifications/sns/sns.service';
 
 @Injectable()
 export class PlaneService {
   private readonly logger = new Logger(PlaneService.name);
   private engine: NodeJS.Timeout | undefined;
+
+  constructor(private readonly snsService: SnsService) {}
 
   private readonly actionsByName = new Map<Action, Function>([
     [Action.PREPARE, this.prepare.bind(this)],
@@ -19,7 +22,11 @@ export class PlaneService {
     [Action.ACELERATE, this.acelerate.bind(this)],
   ]);
 
-  executeAction(action: Action, plane: Plane, params?: Record<string, string>) {
+  async executeAction(
+    action: Action,
+    plane: Plane,
+    params?: Record<string, string>,
+  ): Promise<void> {
     const func = this.actionsByName.get(action);
     if (func) {
       func(plane, params);
@@ -108,11 +115,12 @@ export class PlaneService {
     if (this.engine) {
       clearInterval(this.engine);
     }
-    this.engine = setInterval(() => {
+    this.engine = setInterval(async () => {
       const functions = Array.from(plane.functions?.values() ?? []);
       functions.forEach((func) => {
         func(plane);
       });
+      await this.snsService.sendStatus(plane);
     }, plane.stats.velocity);
   }
 }

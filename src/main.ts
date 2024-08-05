@@ -14,7 +14,7 @@ async function bootstrap() {
   const planeFactory = app.get(PlaneFactory);
 
   await planeFactory.registerPlane(
-    planeFactory.createPlane(planeName, planeNumberId, planePort),
+    await planeFactory.createPlane(planeName, planeNumberId, planePort),
   );
 
   await app.listen(planePort);
