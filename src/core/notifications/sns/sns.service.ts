@@ -1,5 +1,5 @@
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import { PlaneDto } from '@crisman999/plane-types/src/domain/plane';
+import { PlaneDto } from '@crisman999/plane-types';
 import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
@@ -19,15 +19,13 @@ export class SnsService {
   }
 
   async sendStatus(plane: PlaneDto): Promise<void> {
-    this.logger.log('sending message');
     const command = new PublishCommand({
       Message: JSON.stringify(plane),
       TopicArn: 'arn:aws:sns:us-east-1:000000000000:plane-status-topic',
     });
 
     try {
-      const result = await this.snsClient.send(command);
-      this.logger.log(`Message published successfully: ${result.MessageId}`);
+      await this.snsClient.send(command);
     } catch (error) {
       this.logger.error(
         'Error publishing message 2',
