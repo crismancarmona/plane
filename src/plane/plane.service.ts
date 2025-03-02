@@ -36,7 +36,7 @@ export class PlaneService {
   private prepare(plane: Plane) {
     this.logger.log('Turning on: ', plane.id);
     plane.stats.state = PlaneState.READY;
-    plane.stats.velocity = 250;
+    plane.stats.velocity = 50;
     plane.stats.angle = 0;
 
     this.acelerate(plane, { velocity: String(plane.stats.velocity) });

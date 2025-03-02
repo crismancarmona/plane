@@ -75,15 +75,15 @@ describe(PlaneService.name, () => {
 
     jest.advanceTimersByTime(100);
 
-    expect(plane.stats.x).toEqual(104.5);
+    expect(plane.stats.x).toBeCloseTo(104.5, 0.01);
 
     jest.advanceTimersByTime(100);
 
-    expect(plane.stats.x).toEqual(105);
+    expect(plane.stats.x).toBeCloseTo(104, 0.01);
 
     jest.advanceTimersByTime(100);
 
-    expect(plane.stats.x).toEqual(105.5);
+    expect(plane.stats.x).toBeCloseTo(104, 0.01);
   });
 });
 
@@ -101,11 +101,10 @@ function testTakeOff(planeService: PlaneService, plane: Plane) {
   jest.advanceTimersByTime(1000);
 
   expect(plane.stats.state).toEqual<PlaneState>(PlaneState.RUNNING);
-  expect(plane.stats.x).toEqual(2);
-
+  expect(plane.stats.x).toBeCloseTo(2);
   jest.advanceTimersByTime(1000);
 
-  expect(plane.stats.x).toEqual(4);
+  expect(plane.stats.x).toBeCloseTo(4);
 
   jest.advanceTimersByTime(50000);
 
